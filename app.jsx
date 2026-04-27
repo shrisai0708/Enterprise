@@ -5,7 +5,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Auth Component
-const AuthUI = ({ session }) => {
+const AuthUI = ({ session, onBack }) => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -42,6 +42,11 @@ const AuthUI = ({ session }) => {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f7f5' }}>
       <FontLoader />
+      {onBack && (
+        <button onClick={onBack} style={{ position: 'absolute', top: 30, left: 40, background: 'white', border: '1px solid #e5e7eb', color: '#047857', padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+          ← Back to Home
+        </button>
+      )}
       <div style={{ background: 'white', padding: 40, borderRadius: 12, boxShadow: '0 4px 20px rgba(0,0,0,0.05)', width: '100%', maxWidth: 400 }}>
         <h2 className="fd" style={{ fontSize: '1.5rem', marginBottom: 20 }}>{isSignUp ? 'Create an Account' : 'Welcome Back'}</h2>
         <form onSubmit={handleAuth} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -832,7 +837,7 @@ const CERT_TIERS = [
 function getCertTier(score) { return CERT_TIERS.find(t=>score>=t.minScore)||null; }
 
 // ─── NAVBAR ───────────────────────────────────────────────────────────────────
-const Navbar = ({ onLogoClick, label, T }) => {
+const Navbar = ({ onLogoClick, label, T, showLogin, onLoginClick }) => {
   const dark = !!T;
   return (
     <nav style={{ background:dark?T.bg:'#fff', borderBottom:dark?`1px solid rgba(255,255,255,0.1)`:'1px solid #e5e7eb', position:'sticky', top:0, zIndex:50, display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 48px', height:60 }}>
@@ -844,7 +849,12 @@ const Navbar = ({ onLogoClick, label, T }) => {
           Pramanik <span style={{ color:dark?'rgba(255,255,255,0.35)':'#9ca3af', fontFamily:'Inter,sans-serif', fontWeight:400, fontSize:'0.8rem', letterSpacing:'0.03em' }}>· Enterprise Maturity Platform</span>
         </span>
       </button>
-      {label && <span style={{ fontSize:11, color:dark?'rgba(255,255,255,0.4)':'#9ca3af', letterSpacing:'0.1em', textTransform:'uppercase' }}>{label}</span>}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        {label && <span style={{ fontSize:11, color:dark?'rgba(255,255,255,0.4)':'#9ca3af', letterSpacing:'0.1em', textTransform:'uppercase' }}>{label}</span>}
+        {showLogin && (
+          <button onClick={onLoginClick} style={{ background:'#047857', color:'white', border:'none', borderRadius:6, padding:'8px 16px', fontSize:12, fontWeight:600, cursor:'pointer' }}>Log In</button>
+        )}
+      </div>
     </nav>
   );
 };
@@ -1745,6 +1755,7 @@ function EnterpriseMaturityApp({ session, onSignOut }) {
 export default function App() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedAction, setSelectedAction] = useState(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -1761,11 +1772,24 @@ export default function App() {
 
   if (loading) return null;
 
+  if (session) {
+    return <EnterpriseMaturityApp session={session} onSignOut={() => supabase.auth.signOut()} />;
+  }
+
+  if (selectedAction) {
+    return (
+      <div style={{ position: 'relative' }}>
+        <AuthUI session={session} onBack={() => setSelectedAction(null)} />
+      </div>
+    );
+  }
+
   return (
-    <>
-      <AuthUI session={session} />
-      {session && <EnterpriseMaturityApp session={session} onSignOut={() => supabase.auth.signOut()} />}
-    </>
+    <div style={{ minHeight:'100vh' }}>
+      <FontLoader />
+      <Navbar onLogoClick={() => {}} showLogin={true} onLoginClick={() => setSelectedAction('login')} />
+      <Home onSelect={(id) => setSelectedAction(id)} />
+    </div>
   );
 }
 
