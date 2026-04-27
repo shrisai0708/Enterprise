@@ -77,24 +77,45 @@ const AuthUI = ({ session }) => {
 
 // ─── STYLES ──────────────────────────────────────────────────────────────────
 const FontLoader = () => (
-  <style>{`
+  <style dangerouslySetInnerHTML={{__html: `
     @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap');
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body, #root { font-family: 'Inter', -apple-system, sans-serif; background: #fff; color: #0d1117; font-size: 15px; }
-    .fd  { font-family: 'Libre Baskerville', Georgia, serif; letter-spacing: -0.01em; line-height: 1.15; font-weight: 700; }
-    .fdi { font-family: 'Libre Baskerville', Georgia, serif; font-style: italic; font-weight: 400; line-height: 1.15; letter-spacing: 0; }
-    input[type=range] { -webkit-appearance: none; width: 100%; height: 3px; border-radius: 2px; background: #e5e7eb; outline: none; cursor: pointer; }
-    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; border-radius: 50%; background: #0d1117; cursor: pointer; border: 2px solid white; box-shadow: 0 1px 4px rgba(0,0,0,0.25); }
-    input[type=range]::-moz-range-thumb { width: 15px; height: 15px; border-radius: 50%; background: #0d1117; cursor: pointer; border: 2px solid white; }
-    button { font-family: 'Inter', sans-serif; }
-    @keyframes fadeUp { from { opacity:0; transform:translateY(16px) } to { opacity:1; transform:translateY(0) } }
-    @keyframes marquee { from { transform:translateX(0) } to { transform:translateX(-50%) } }
-    .afu  { animation: fadeUp 0.6s cubic-bezier(0.22,1,0.36,1) both; }
-    .afu2 { animation: fadeUp 0.6s 0.1s cubic-bezier(0.22,1,0.36,1) both; }
-    .afu3 { animation: fadeUp 0.6s 0.2s cubic-bezier(0.22,1,0.36,1) both; }
-    .afu4 { animation: fadeUp 0.6s 0.3s cubic-bezier(0.22,1,0.36,1) both; }
-    @media print { .no-print { display:none!important } }
-  `}</style>
+    body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; background: #fff; color: #0d1117; -webkit-font-smoothing: antialiased; }
+    .fd { font-family: 'Libre Baskerville', serif; letter-spacing: -0.02em; }
+    .fdi { font-family: 'Libre Baskerville', serif; font-style: italic; letter-spacing: -0.02em; }
+    * { box-sizing: border-box; }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes subtleZoom {
+      0% { transform: scale(0.98); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes subtleBg {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .animate-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+    .animate-zoom { animation: subtleZoom 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(4, 120, 87, 0.15);
+      box-shadow: 0 4px 24px rgba(4, 120, 87, 0.05);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .glass-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(4, 120, 87, 0.12);
+      border: 1px solid rgba(4, 120, 87, 0.3);
+    }
+  `}}/>
 );
 
 // ─── TOKENS ───────────────────────────────────────────────────────────────────
@@ -104,33 +125,14 @@ const C = {
   dark:'#080c0a',
 };
 
-// Per-assessment colour worlds — the full UI shifts to each assessment's palette
+const GREEN_THEME = {
+  bg:'#022c22', bg2:'#064e3b', accent:'#047857', mid:'#10b981',
+  highlight:'#d1fae5', text:'#a7f3d0', border:'rgba(167,243,208,0.18)',
+  btn:'#047857', btnHover:'#065f46',
+};
+
 const THEMES = {
-  analytics: {
-    bg:'#022c22', bg2:'#064e3b', accent:'#047857', mid:'#10b981',
-    highlight:'#d1fae5', text:'#a7f3d0', border:'rgba(167,243,208,0.18)',
-    btn:'#047857', btnHover:'#065f46',
-  },
-  esg: {
-    bg:'#0c2a3a', bg2:'#0e3a52', accent:'#0891b2', mid:'#22d3ee',
-    highlight:'#cffafe', text:'#a5f3fc', border:'rgba(165,243,252,0.18)',
-    btn:'#0891b2', btnHover:'#0e7490',
-  },
-  dei: {
-    bg:'#1e1040', bg2:'#2d1760', accent:'#7c3aed', mid:'#a78bfa',
-    highlight:'#ede9fe', text:'#c4b5fd', border:'rgba(196,181,253,0.18)',
-    btn:'#7c3aed', btnHover:'#6d28d9',
-  },
-  dpdp: {
-    bg:'#0c1f35', bg2:'#0f2d4a', accent:'#0369a1', mid:'#38bdf8',
-    highlight:'#e0f2fe', text:'#7dd3fc', border:'rgba(125,211,252,0.18)',
-    btn:'#0369a1', btnHover:'#075985',
-  },
-  aiGov: {
-    bg:'#13102a', bg2:'#1e1a42', accent:'#4338ca', mid:'#818cf8',
-    highlight:'#e0e7ff', text:'#a5b4fc', border:'rgba(165,180,252,0.18)',
-    btn:'#4338ca', btnHover:'#3730a3',
-  },
+  analytics: GREEN_THEME, esg: GREEN_THEME, dei: GREEN_THEME, dpdp: GREEN_THEME, aiGov: GREEN_THEME,
 };
 
 // ─── SHARED DATA ──────────────────────────────────────────────────────────────
@@ -299,12 +301,6 @@ const ANALYTICS = {
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ASSESSMENT 2 — ESG READINESS ASSESSMENT
-// Anchored to SEBI BRSR (mandatory for top 1,000 listed cos, FY2022-23 onwards,
-// BRSR Core expanding to top 1,000 by FY2026-27) with GRI Standards overlay.
-// Industry benchmarks from: NSE/CFA Institute/CFA Society India BRSR data
-// analysis of 300 companies (~70% of India's market cap), FY2023; SES/NSE
-// ESG Analysis of 200 Listed Companies (2024). Governance weighted highest as
-// SEBI LODR compliance is the regulatory entry point for all listed entities.
 // ═══════════════════════════════════════════════════════════════════════════════
 const ESG = {
   id: 'esg',
@@ -330,10 +326,6 @@ const ESG = {
     { key:'supplychain',   name:'Supply Chain Responsibility', shortName:'Supply Chain',  description:'Supplier ESG assessments, responsible sourcing, value chain emissions, and supplier capacity building.',                         weight:0.12 },
     { key:'reporting',     name:'Reporting & Disclosure',      shortName:'Reporting',     description:'Quality, completeness, and assurance of BRSR and GRI-aligned disclosures.',                                                      weight:0.10, isOutcome:true },
   ],
-  // VL anchors: NSE/SES ESG Analysis (200 listed companies, 2024) + NSE/CFA BRSR data (300 companies, FY23).
-  // IT sector tops overall ESG score. BFSI leads on governance (RBI/SEBI regulatory pressure).
-  // Energy leads on environmental (high scrutiny + IND AS reporting). Social scores highest
-  // in healthcare/IT (female-dominant workforce + POSH compliance culture).
   vlBenchmarks: {
     bfsi:         { governance:3.9, environmental:2.8, social:3.3, strategy:3.5, supplychain:2.5, reporting:3.6 },
     it:           { governance:3.7, environmental:3.0, social:3.5, strategy:3.5, supplychain:2.8, reporting:3.3 },
@@ -350,9 +342,6 @@ const ESG = {
     agriculture:  { governance:2.3, environmental:2.8, social:2.4, strategy:2.2, supplychain:2.5, reporting:2.1 },
     government:   { governance:2.9, environmental:2.6, social:2.7, strategy:2.5, supplychain:2.3, reporting:2.4 },
   },
-  // Reporting drops fastest: BRSR mandatory only for listed top 1,000.
-  // Governance also steep: regulatory mandates concentrated in large listed cos.
-  // Social most consistent: POSH Act applies to all establishments; basic hygiene is common.
   sizeMulti: {
     1:{ governance:0.50, environmental:0.55, social:0.60, strategy:0.46, supplychain:0.62, reporting:0.40 },
     2:{ governance:0.62, environmental:0.65, social:0.70, strategy:0.58, supplychain:0.72, reporting:0.52 },
@@ -360,11 +349,8 @@ const ESG = {
     4:{ governance:0.88, environmental:0.88, social:0.89, strategy:0.87, supplychain:0.89, reporting:0.83 },
     5:{ governance:1.00, environmental:1.00, social:1.00, strategy:1.00, supplychain:1.00, reporting:1.00 },
   },
-  // BFSI and Energy: regulatory ESG mandates flatten the size gradient.
-  // Agriculture and Real Estate: ESG is almost exclusively a large-enterprise concern.
   indFlex: { bfsi:+0.06, energy:+0.04, it:+0.03, manufacturing:+0.02, telecom:+0.01, healthcare:+0.01, fmcg:0, auto:0, retail:0, logistics:-0.01, education:-0.01, realestate:-0.02, government:-0.01, agriculture:-0.03 },
   questions: [
-    // Governance & Ethics (9)
     {id:'G1',text:'Our board has clear oversight and accountability for ESG performance, including dedicated agenda time.',dim:'governance'},
     {id:'G2',text:'We have a formal, publicly available code of ethics and anti-corruption policy that is actively enforced.',dim:'governance'},
     {id:'G3',text:'A whistle-blower mechanism is in place and accessible to all employees and stakeholders.',dim:'governance'},
@@ -374,7 +360,6 @@ const ESG = {
     {id:'G7',text:'Business ethics training is conducted regularly across the organisation and is tracked for completion.',dim:'governance'},
     {id:'G8',text:'Stakeholder grievance mechanisms are in place and response timelines are tracked.',dim:'governance'},
     {id:'G9',text:'Our governance practices are benchmarked against applicable regulations (SEBI LODR, Companies Act) annually.',dim:'governance'},
-    // Environmental Management (9)
     {id:'E1',text:'We measure and track our Scope 1 and Scope 2 greenhouse gas (GHG) emissions with documented methodology.',dim:'environmental'},
     {id:'E2',text:'We have set quantified, time-bound targets for reducing energy consumption and carbon emissions.',dim:'environmental'},
     {id:'E3',text:'Water consumption is measured, and water efficiency or recycling programmes are operational.',dim:'environmental'},
@@ -384,7 +369,6 @@ const ESG = {
     {id:'E7',text:'Biodiversity and land-use impact is assessed as part of our environmental planning.',dim:'environmental'},
     {id:'E8',text:'Environmental performance data is independently verified or assured by a third party.',dim:'environmental'},
     {id:'E9',text:'We track and actively manage Scope 3 (value chain) emissions across key upstream and downstream categories.',dim:'environmental'},
-    // Social & Human Capital (9)
     {id:'S1',text:'Employee health, safety, and wellbeing programmes are formally structured and outcomes are measured.',dim:'social'},
     {id:'S2',text:'We comply with and go meaningfully beyond POSH Act requirements for prevention of workplace harassment.',dim:'social'},
     {id:'S3',text:'Fair wages are benchmarked regularly and pay equity gaps are identified and addressed.',dim:'social'},
@@ -394,7 +378,6 @@ const ESG = {
     {id:'S7',text:'Customer data privacy, product safety, and responsible marketing are systematically addressed and governed.',dim:'social'},
     {id:'S8',text:'Employee satisfaction and engagement is formally measured and results drive management actions.',dim:'social'},
     {id:'S9',text:'Our workforce policies promote inclusion and address the needs of contract, migrant, and seasonal workers.',dim:'social'},
-    // ESG Strategy & Leadership (8)
     {id:'ST1',text:'Our organisation has a board-approved, publicly stated ESG strategy with measurable targets.',dim:'strategy'},
     {id:'ST2',text:'ESG KPIs are formally linked to executive and senior leadership compensation.',dim:'strategy'},
     {id:'ST3',text:'We have a dedicated ESG lead, sustainability officer, or equivalent role with sufficient authority and resources.',dim:'strategy'},
@@ -403,7 +386,6 @@ const ESG = {
     {id:'ST6',text:'We proactively engage investors and analysts on our ESG strategy and performance.',dim:'strategy'},
     {id:'ST7',text:'Our ESG performance is benchmarked against sector peers and global frameworks at least annually.',dim:'strategy'},
     {id:'ST8',text:'ESG innovation — sustainable products, services, or business models — is a strategic growth priority.',dim:'strategy'},
-    // Supply Chain Responsibility (8)
     {id:'SC1',text:'We have a supplier code of conduct that covers ESG minimum standards and is publicly disclosed.',dim:'supplychain'},
     {id:'SC2',text:'ESG compliance clauses are included in contracts with key and high-risk suppliers.',dim:'supplychain'},
     {id:'SC3',text:'We conduct ESG audits or self-assessments for our top suppliers by spend or risk.',dim:'supplychain'},
@@ -412,7 +394,6 @@ const ESG = {
     {id:'SC6',text:'We actively promote local and diverse supplier procurement with measurable targets.',dim:'supplychain'},
     {id:'SC7',text:'Supply chain ESG risk mapping is formally conducted and integrated into business continuity planning.',dim:'supplychain'},
     {id:'SC8',text:'We track and report supply chain (Scope 3) emissions across key procurement categories.',dim:'supplychain'},
-    // Reporting & Disclosure (7 — outcome)
     {id:'R1',text:'We publish an annual sustainability or ESG report aligned to BRSR mandatory requirements.',dim:'reporting'},
     {id:'R2',text:'Our BRSR disclosure covers all mandatory KPIs, and we additionally disclose leadership indicators.',dim:'reporting'},
     {id:'R3',text:'ESG data is independently assured or verified — at minimum on BRSR Core KPIs.',dim:'reporting'},
@@ -433,14 +414,6 @@ const ESG = {
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ASSESSMENT 3 — DEI MATURITY INDEX
-// India-first lens: RPWD Act 2016 (3% disability hiring mandate), POSH Act,
-// Transgender Persons Act 2019, and caste equity (SC/ST/OBC representation).
-// Benchmarks from: NASSCOM DEI Landscape in India Inc. (2024); AIM Research
-// DEI in India's Tech 2025 (with Chubb); Randstad/NASSCOM DEI Best Practices
-// whitepaper (300+ roundtable participants, 150+ member organisations).
-// Key data: IT women ~36% of workforce (NASSCOM 2024); BFSI 69% have dedicated
-// DEI teams (AIM Research 2025); only 20% of Indian orgs report 40%+ gender
-// diversity (NASSCOM DEI Landscape 2024).
 // ═══════════════════════════════════════════════════════════════════════════════
 const DEI = {
   id: 'dei',
@@ -466,11 +439,6 @@ const DEI = {
     { key:'disability',  name:'Disability & Accessibility', shortName:'Disability',    description:'RPWD Act 2016 compliance, accessible infrastructure, disability-inclusive hiring, and reasonable accommodation policies.',     weight:0.10 },
     { key:'measurement', name:'Measurement & Accountability',shortName:'Measurement',  description:'DEI data rigour, pay equity disclosure, board-level review, and external reporting.',                                          weight:0.10, isOutcome:true },
   ],
-  // VL anchors: IT leads on gender (36% women) and culture (strong public DEI commitments).
-  // BFSI: 69% have dedicated DEI teams (AIM Research 2025), strong strategy scores.
-  // Manufacturing/Logistics: lowest DEI maturity — male-dominated, blue-collar focus.
-  // Government: reservation system provides some structure but culture and measurement lag.
-  // Agriculture: lowest overall — almost no formal DEI structures.
   vlBenchmarks: {
     bfsi:         { gender:3.2, culture:3.0, deistrategy:3.1, social:2.5, disability:2.6, measurement:2.9 },
     it:           { gender:3.6, culture:3.3, deistrategy:3.4, social:2.8, disability:2.9, measurement:3.1 },
@@ -487,9 +455,6 @@ const DEI = {
     agriculture:  { gender:1.9, culture:2.0, deistrategy:1.9, social:1.8, disability:1.7, measurement:1.8 },
     government:   { gender:2.6, culture:2.4, deistrategy:2.5, social:2.3, disability:2.5, measurement:2.4 },
   },
-  // Measurement drops fastest (requires HR analytics capability, rare in smaller firms).
-  // Strategy: dedicated DEI roles only viable at scale.
-  // Culture is most consistent across sizes — a small org can have an inclusive culture.
   sizeMulti: {
     1:{ gender:0.55, culture:0.60, deistrategy:0.48, social:0.58, disability:0.52, measurement:0.43 },
     2:{ gender:0.65, culture:0.69, deistrategy:0.60, social:0.67, disability:0.63, measurement:0.55 },
@@ -497,12 +462,8 @@ const DEI = {
     4:{ gender:0.88, culture:0.88, deistrategy:0.87, social:0.87, disability:0.86, measurement:0.83 },
     5:{ gender:1.00, culture:1.00, deistrategy:1.00, social:1.00, disability:1.00, measurement:1.00 },
   },
-  // IT: digital-native DEI culture flattens size gradient (even small IT firms have DEI policies).
-  // BFSI: investor and regulatory pressure on diversity even at smaller licensed entities.
-  // Manufacturing/Agriculture: DEI is almost exclusively a large-enterprise discussion.
   indFlex: { it:+0.08, bfsi:+0.04, healthcare:+0.03, education:+0.02, telecom:+0.01, fmcg:+0.01, retail:0, government:0, auto:-0.03, energy:-0.02, logistics:-0.03, manufacturing:-0.04, realestate:-0.02, agriculture:-0.05 },
   questions: [
-    // Gender Equity (10)
     {id:'GE1',text:'Women represent at least 30% of our total permanent workforce.',dim:'gender'},
     {id:'GE2',text:'Women hold at least 20% of senior leadership and board-level positions.',dim:'gender'},
     {id:'GE3',text:'A formal pay equity audit is conducted at least every two years and identified gaps are addressed.',dim:'gender'},
@@ -513,7 +474,6 @@ const DEI = {
     {id:'GE8',text:'Gender representation targets are set, tracked, and reviewed at each organisational level.',dim:'gender'},
     {id:'GE9',text:'Flexible and hybrid working arrangements are equally available to and utilised by all genders.',dim:'gender'},
     {id:'GE10',text:'POSH complaints are resolved within mandated timelines and ICC composition is compliant.',dim:'gender'},
-    // Inclusion Culture (9)
     {id:'IC1',text:'Our organisation has a formally articulated DEI vision that is communicated consistently across the business.',dim:'culture'},
     {id:'IC2',text:'All people managers receive regular unconscious bias and inclusion training.',dim:'culture'},
     {id:'IC3',text:'Senior leaders visibly champion DEI through concrete actions, not just communication.',dim:'culture'},
@@ -523,7 +483,6 @@ const DEI = {
     {id:'IC7',text:'Diverse cultural, religious, and regional occasions are acknowledged and celebrated across the organisation.',dim:'culture'},
     {id:'IC8',text:'Our workplace has a documented process for addressing discrimination, harassment, and micro-aggressions.',dim:'culture'},
     {id:'IC9',text:'DEI-related factors are tracked in exit interviews and attrition analysis drives systemic corrective action.',dim:'culture'},
-    // DEI Leadership & Strategy (8)
     {id:'DL1',text:'There is a board-level or C-suite owner formally accountable for DEI outcomes with defined KPIs.',dim:'deistrategy'},
     {id:'DL2',text:'A written DEI strategy with measurable targets and a multi-year roadmap has been board-approved.',dim:'deistrategy'},
     {id:'DL3',text:'DEI performance metrics are included in senior leadership annual performance reviews.',dim:'deistrategy'},
@@ -532,7 +491,6 @@ const DEI = {
     {id:'DL6',text:'Our recruitment partner ecosystem is regularly vetted and selected for strong DEI practices.',dim:'deistrategy'},
     {id:'DL7',text:'We participate in at least one external DEI benchmark, index, or certification programme.',dim:'deistrategy'},
     {id:'DL8',text:'DEI strategy is reviewed and refreshed at least annually with input from diverse employee stakeholders.',dim:'deistrategy'},
-    // Social Equity — India-specific (9)
     {id:'SE1',text:'We track and disclose workforce representation across social categories (SC/ST/OBC) as required under applicable law.',dim:'social'},
     {id:'SE2',text:'We have active outreach and recruitment programmes targeting underrepresented social communities.',dim:'social'},
     {id:'SE3',text:'First-generation professionals receive structured onboarding, mentoring, and development support.',dim:'social'},
@@ -542,7 +500,6 @@ const DEI = {
     {id:'SE7',text:'We partner with NGOs, community organisations, or skill development bodies to build talent pipelines from underrepresented communities.',dim:'social'},
     {id:'SE8',text:'Our procurement policy promotes sourcing from SC/ST, women-owned, and micro-enterprise suppliers.',dim:'social'},
     {id:'SE9',text:'Employee assistance programmes address socioeconomic challenges faced by diverse and first-generation employees.',dim:'social'},
-    // Disability & Accessibility (7)
     {id:'DA1',text:'We meet or are on a documented roadmap toward the 3% mandatory employment target for persons with disabilities under the RPWD Act 2016.',dim:'disability'},
     {id:'DA2',text:'Our physical premises and digital tools and platforms are accessible to persons with disabilities.',dim:'disability'},
     {id:'DA3',text:'Reasonable accommodation policies are in place and all employees know how to access them.',dim:'disability'},
@@ -550,7 +507,6 @@ const DEI = {
     {id:'DA5',text:'Employees with disabilities have equal access to career development, training, and promotion opportunities.',dim:'disability'},
     {id:'DA6',text:'We partner with disability-focused organisations for talent sourcing and employee awareness.',dim:'disability'},
     {id:'DA7',text:'Disability representation and inclusion metrics are formally tracked, reviewed by leadership, and reported.',dim:'disability'},
-    // Measurement & Accountability (7 — outcome)
     {id:'MA1',text:'Comprehensive DEI data — gender, disability, social categories — is collected, validated, and maintained.',dim:'measurement'},
     {id:'MA2',text:'DEI metrics are reported formally in our annual report, sustainability disclosure, or BRSR.',dim:'measurement'},
     {id:'MA3',text:'Pay equity gaps are quantified across gender and relevant diversity dimensions and disclosed internally.',dim:'measurement'},
@@ -571,14 +527,6 @@ const DEI = {
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ASSESSMENT 4 — DATA PRIVACY & DPDP READINESS
-// Anchored to Digital Personal Data Protection Act 2023 + DPDP Rules 2025
-// (MeitY notified 14 Nov 2025). Full compliance deadline 13 May 2027.
-// Penalties up to ₹250 Cr for failure to maintain reasonable security safeguards.
-// Industry benchmarks calibrated from: EY India DPDP Readiness Survey (150+
-// professionals, 2026); PwC India Data Privacy Survey (2024); Protiviti India
-// State of Data Privacy 2024. BFSI leads (RBI/SEBI/IRDAI multi-regulator
-// pressure); IT/ITeS second (GDPR experience, tech capability). Manufacturing
-// and Agriculture lowest — 70% of Indian organisations not familiar with Act.
 // ═══════════════════════════════════════════════════════════════════════════════
 const DPDP = {
   id:'dpdp', name:'Data Privacy & DPDP Readiness', badge:'04',
@@ -602,10 +550,6 @@ const DPDP = {
     { key:'vendor',       name:'Vendor & Cross-Border Management',  shortName:'Vendor',       description:'Data Processor contracts, third-party assessments, sub-processor controls, and cross-border transfer compliance with MeitY\'s trusted jurisdiction list.',                          weight:0.12 },
     { key:'complianceGov',name:'Compliance Governance',             shortName:'Governance',   description:'DPO appointment, DPIA process, records of processing, board oversight, gap assessment, privacy-by-design, and readiness for Data Protection Board scrutiny.', weight:0.06, isOutcome:true },
   ],
-  // Benchmarks: VL tier from EY/PwC/Protiviti DPDP readiness surveys (2024–2026).
-  // BFSI highest: multi-regulator pressure (RBI, SEBI, IRDAI). IT/ITeS strong: GDPR
-  // experience + tech capability. Healthcare moderate: sensitive data but fragmented
-  // infrastructure. Manufacturing lowest: legacy systems, no prior privacy regulation.
   vlBenchmarks:{
     bfsi:         { consent:3.4, dataGov:3.5, security:3.6, rights:3.2, vendor:3.0, complianceGov:3.4 },
     it:           { consent:3.3, dataGov:3.4, security:3.5, rights:3.1, vendor:3.2, complianceGov:3.2 },
@@ -622,10 +566,6 @@ const DPDP = {
     agriculture:  { consent:1.8, dataGov:1.8, security:1.9, rights:1.7, vendor:1.6, complianceGov:1.7 },
     government:   { consent:2.2, dataGov:2.4, security:2.5, rights:2.1, vendor:2.0, complianceGov:2.3 },
   },
-  // Security and complianceGov drop steeply with size (infra investment + DPO roles
-  // are large-enterprise territory). Consent is moderately flat — even small companies
-  // must get consent right. BFSI/IT flex: multi-regulator compliance culture lifts
-  // smaller entities. Manufacturing/agriculture: compliance almost exclusively at scale.
   sizeMulti:{
     1:{ consent:0.58, dataGov:0.52, security:0.44, rights:0.56, vendor:0.50, complianceGov:0.40 },
     2:{ consent:0.68, dataGov:0.63, security:0.56, rights:0.66, vendor:0.61, complianceGov:0.52 },
@@ -635,7 +575,6 @@ const DPDP = {
   },
   indFlex:{ bfsi:+0.06, it:+0.05, telecom:+0.02, healthcare:+0.02, retail:+0.01, fmcg:0, auto:0, energy:+0.01, logistics:-0.01, education:-0.01, realestate:-0.02, government:0, manufacturing:-0.03, agriculture:-0.04 },
   questions:[
-    // Consent & Notice Management (8)
     {id:'DP1', text:'We maintain standalone, itemised privacy notices for each processing activity, written in plain language and independently understandable.', dim:'consent'},
     {id:'DP2', text:'Consent withdrawal is as easy as consent collection — technically implemented across all our digital channels.', dim:'consent'},
     {id:'DP3', text:'We have a documented and tested process to obtain and verify parental consent before processing personal data of children under 18.', dim:'consent'},
@@ -644,7 +583,6 @@ const DPDP = {
     {id:'DP6', text:'Consent records are maintained with timestamps, specific purpose descriptions, and evidence of the notice provided at collection.', dim:'consent'},
     {id:'DP7', text:'We have assessed and documented the lawful basis (consent or legitimate use) for every category of personal data we process.', dim:'consent'},
     {id:'DP8', text:'Consent management processes are reviewed and updated whenever our processing purposes change.', dim:'consent'},
-    // Data Governance & Classification (8)
     {id:'DG1', text:'We maintain a comprehensive data inventory documenting all personal data collected, its purpose, storage location, and retention period.', dim:'dataGov'},
     {id:'DG2', text:'Personal data processing is strictly limited to the specified purpose for which consent was obtained — no secondary use without fresh consent.', dim:'dataGov'},
     {id:'DG3', text:'We collect only the minimum personal data necessary for each stated purpose (data minimisation is actively enforced, not aspirational).', dim:'dataGov'},
@@ -653,7 +591,6 @@ const DPDP = {
     {id:'DG6', text:'Cross-border data transfers are mapped and occur only to countries on MeitY\'s approved trusted jurisdiction list, or under equivalent safeguards.', dim:'dataGov'},
     {id:'DG7', text:'Data flows across internal systems and to third parties are documented through up-to-date, verified data flow diagrams.', dim:'dataGov'},
     {id:'DG8', text:'We have identified all Data Processors we engage and documented the categories of personal data shared with each.', dim:'dataGov'},
-    // Security Safeguards & Breach Response (8)
     {id:'DS1', text:'Reasonable technical and organisational security safeguards are implemented, proportionate to the volume and sensitivity of personal data processed.', dim:'security'},
     {id:'DS2', text:'A personal data breach response plan exists, has been tested within the last 12 months, and can activate within the 72-hour regulatory reporting window.', dim:'security'},
     {id:'DS3', text:'Breach notification processes are operationally ready to cover both the Data Protection Board and affected data principals without undue delay.', dim:'security'},
@@ -662,7 +599,6 @@ const DPDP = {
     {id:'DS6', text:'Incident logs are maintained for all suspected or confirmed personal data breaches, including near-misses and false positives.', dim:'security'},
     {id:'DS7', text:'Employee training on data security obligations and DPDP Act requirements is conducted at least annually and completion is tracked.', dim:'security'},
     {id:'DS8', text:'We have controls to detect and contain data exfiltration, unauthorised access, and insider threats across personal data environments.', dim:'security'},
-    // Individual Rights & Grievance (8)
     {id:'DR1', text:'A publicly available, easily accessible mechanism exists for data principals to request access to, correction of, or erasure of their personal data.', dim:'rights'},
     {id:'DR2', text:'All data principal requests — access, correction, erasure, nomination — are resolved within the 90-day statutory requirement.', dim:'rights'},
     {id:'DR3', text:'A grievance redressal mechanism for data privacy complaints is published on our website or app and is actively monitored with defined SLAs.', dim:'rights'},
@@ -671,7 +607,6 @@ const DPDP = {
     {id:'DR6', text:'We have a documented process to respond to Data Protection Board complaints and to cooperate with Board investigations.', dim:'rights'},
     {id:'DR7', text:'Consent withdrawal is handled in near-real-time and triggers cessation of processing across all linked systems within a defined SLA.', dim:'rights'},
     {id:'DR8', text:'Data principal rights requests are logged, tracked, and reported to leadership as part of ongoing compliance monitoring.', dim:'rights'},
-    // Vendor & Cross-Border Management (8)
     {id:'DV1', text:'All Data Processors are engaged under written contracts that explicitly bind them to comply with DPDP Act obligations on our behalf.', dim:'vendor'},
     {id:'DV2', text:'We assess the security and compliance posture of Data Processors before engagement and at defined periodic intervals.', dim:'vendor'},
     {id:'DV3', text:'Contracts with Data Processors prohibit engagement of sub-processors without our explicit prior written approval.', dim:'vendor'},
@@ -680,7 +615,6 @@ const DPDP = {
     {id:'DV6', text:'Vendor contracts include breach notification obligations aligned with the DPDP Act\'s 72-hour reporting requirement.', dim:'vendor'},
     {id:'DV7', text:'We conduct periodic audits or compliance reviews of key Data Processor obligations and document findings.', dim:'vendor'},
     {id:'DV8', text:'There is a formal offboarding process for Data Processors that ensures deletion or return of all personal data upon contract termination.', dim:'vendor'},
-    // Compliance Governance (8 — outcome)
     {id:'DC1', text:'A Data Protection Officer or designated privacy lead has been appointed with a clear mandate, adequate authority, and board-level reporting access.', dim:'complianceGov'},
     {id:'DC2', text:'A Data Protection Impact Assessment (DPIA) process has been established and is conducted for all high-risk processing activities before deployment.', dim:'complianceGov'},
     {id:'DC3', text:'Records of processing activities (ROPA) are maintained, reviewed, and updated as our data practices change.', dim:'complianceGov'},
@@ -726,18 +660,6 @@ const DPDP = {
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ASSESSMENT 5 — AI GOVERNANCE READINESS
-// Anchored to: MeitY India AI Governance Guidelines (5 Nov 2025, IndiaAI Mission);
-// RBI FREE-AI Committee Framework (August 2025); SEBI 2024 AI Consultation Paper;
-// ICMR Ethical Guidelines for AI in Healthcare; DPDP Act 2023 — SDF obligations
-// for algorithmic transparency and Data Protection Impact Assessments.
-// India has not enacted a standalone AI law. Existing laws apply — DPDP, IT Act,
-// Consumer Protection Act, IPC. A dedicated AI (Ethics & Accountability) Bill was
-// tabled in Lok Sabha Dec 2025; Digital India Act is expected to add algorithmic
-// accountability provisions. Sector regulators (RBI, SEBI, IRDAI, ICMR) all have
-// active AI-specific frameworks. Benchmarks calibrated from: IndiaAI Mission
-// readiness data, NASSCOM AI adoption surveys, RBI FREE-AI report, and sector-
-// level AI deployment surveys (2024–2025). IT leads; BFSI second (RBI/SEBI
-// pressure). All sectors below 3.5 — AI governance is nascent in India.
 // ═══════════════════════════════════════════════════════════════════════════════
 const AI_GOV = {
   id:'aiGov', name:'AI Governance Readiness', badge:'05',
@@ -761,12 +683,6 @@ const AI_GOV = {
     { key:'humanOversight', name:'Human Oversight & Control',          shortName:'Human Oversight',description:'Human-in-the-loop for high-risk decisions, override capabilities, AI literacy of oversight personnel, escalation processes, and accountability assignment per system.',                 weight:0.10 },
     { key:'aiOutcomes',     name:'AI Value & Responsible Outcomes',    shortName:'AI Outcomes',    description:'Measurable value delivered, fairness and compliance metrics, absence of material incidents, and stakeholder trust in AI systems.',                                                       weight:0.06, isOutcome:true },
   ],
-  // Benchmarks: VL tier from IndiaAI Mission, NASSCOM AI surveys, RBI FREE-AI report.
-  // IT sector leads: building and deploying AI, some internal governance.
-  // BFSI second: RBI FREE-AI + SEBI algorithmic accountability pressure.
-  // Healthcare moderate: ICMR guidelines exist but implementation is weak.
-  // Manufacturing/Agriculture lowest: AI adoption is early and governance non-existent.
-  // Note: all benchmarks are low-to-moderate — AI governance is genuinely nascent.
   vlBenchmarks:{
     bfsi:         { aiStrategy:3.0, dataEthics:3.1, transparency:2.8, riskMgmt:3.1, humanOversight:2.9, aiOutcomes:2.9 },
     it:           { aiStrategy:3.2, dataEthics:3.1, transparency:2.9, riskMgmt:3.0, humanOversight:2.8, aiOutcomes:3.0 },
@@ -783,11 +699,6 @@ const AI_GOV = {
     agriculture:  { aiStrategy:1.6, dataEthics:1.7, transparency:1.5, riskMgmt:1.6, humanOversight:1.5, aiOutcomes:1.5 },
     government:   { aiStrategy:2.0, dataEthics:2.1, transparency:1.9, riskMgmt:2.0, humanOversight:2.1, aiOutcomes:1.9 },
   },
-  // AI strategy and transparency: steepest size gradient — board-level AI governance
-  // is large-enterprise territory. Human oversight moderately flat (any company
-  // using AI should have this). IT/BFSI flex: regulatory pressure and tech culture
-  // mean smaller entities still invest. Agriculture/Manufacturing: AI governance
-  // is almost exclusively a concern of large enterprises in these sectors.
   sizeMulti:{
     1:{ aiStrategy:0.44, dataEthics:0.50, transparency:0.44, riskMgmt:0.48, humanOversight:0.55, aiOutcomes:0.48 },
     2:{ aiStrategy:0.56, dataEthics:0.62, transparency:0.56, riskMgmt:0.60, humanOversight:0.65, aiOutcomes:0.59 },
@@ -797,7 +708,6 @@ const AI_GOV = {
   },
   indFlex:{ it:+0.08, bfsi:+0.06, healthcare:+0.02, telecom:+0.02, retail:+0.01, fmcg:0, auto:0, education:+0.01, energy:0, logistics:-0.02, realestate:-0.02, government:0, manufacturing:-0.03, agriculture:-0.05 },
   questions:[
-    // AI Strategy & Governance (8)
     {id:'AG1', text:'Our organisation has a board-approved AI governance policy covering the development, procurement, deployment, and ongoing monitoring of AI systems.', dim:'aiStrategy'},
     {id:'AG2', text:'There is a designated AI governance lead, committee, or equivalent function with clear authority, defined KPIs, and accountability to senior leadership.', dim:'aiStrategy'},
     {id:'AG3', text:'AI systems are formally classified by risk level (high, medium, low) with greater oversight, documentation, and controls applied to higher-risk systems.', dim:'aiStrategy'},
@@ -806,7 +716,6 @@ const AI_GOV = {
     {id:'AG6', text:'AI-related risks are formally included in our enterprise risk management framework and reviewed by the board or risk committee at least annually.', dim:'aiStrategy'},
     {id:'AG7', text:'There is a formal approval process for new AI use cases before deployment, including accountability assignment and regulatory compliance review.', dim:'aiStrategy'},
     {id:'AG8', text:'Responsibility among AI developers, deployers, and end-users is clearly allocated in written policy — accountability does not fall into undefined gaps.', dim:'aiStrategy'},
-    // Data Quality & Ethics in AI (8)
     {id:'AE1', text:'Training data for AI systems is documented for provenance, quality, known limitations, and potential sources of bias before use in model development.', dim:'dataEthics'},
     {id:'AE2', text:'Bias audits are conducted on AI models that affect individuals — particularly those used in hiring, lending, pricing, insurance, or customer decisions.', dim:'dataEthics'},
     {id:'AE3', text:'Personal data used for AI training or inference complies with DPDP Act requirements — consent, purpose limitation, minimisation, and retention.', dim:'dataEthics'},
@@ -815,7 +724,6 @@ const AI_GOV = {
     {id:'AE6', text:'Production AI systems are monitored for data drift, distributional shift, and degradation in output quality, with defined thresholds for escalation.', dim:'dataEthics'},
     {id:'AE7', text:'Fairness metrics are defined, measured, and tracked for AI systems that make or influence decisions impacting individuals.', dim:'dataEthics'},
     {id:'AE8', text:'There is a documented process to identify, remediate, and log bias or fairness violations discovered in deployed AI systems.', dim:'dataEthics'},
-    // Algorithmic Transparency & Explainability (8)
     {id:'AT1', text:'AI systems used for decisions that materially affect individuals (credit, employment, insurance, healthcare) can provide an explanation of the basis for that decision.', dim:'transparency'},
     {id:'AT2', text:'We maintain model cards or equivalent documentation covering architecture, training data summary, known limitations, and decision logic for all deployed AI systems.', dim:'transparency'},
     {id:'AT3', text:'Where required by regulation or contract, automated AI decisions are disclosed to affected individuals in plain, accessible language.', dim:'transparency'},
@@ -824,7 +732,6 @@ const AI_GOV = {
     {id:'AT6', text:'Internal audit or independent review of AI decision outputs is conducted at defined intervals to verify consistency, fairness, and regulatory alignment.', dim:'transparency'},
     {id:'AT7', text:'All deployed AI systems have documented human override mechanisms that allow qualified personnel to challenge, adjust, or reverse automated decisions.', dim:'transparency'},
     {id:'AT8', text:'Individuals adversely affected by AI decisions have a clear, accessible mechanism to seek human review and a meaningful redressal pathway.', dim:'transparency'},
-    // Risk Management & AI Safety (8)
     {id:'AR1', text:'A formal AI risk assessment is conducted for all significant AI systems before production deployment — outputs are documented and tracked to closure.', dim:'riskMgmt'},
     {id:'AR2', text:'Adversarial testing or red-teaming is conducted for high-risk AI systems to identify failure modes, edge cases, and potential for misuse.', dim:'riskMgmt'},
     {id:'AR3', text:'AI systems have defined fail-safe mechanisms that default to conservative or human-reviewed outputs under uncertainty, anomalous inputs, or low-confidence conditions.', dim:'riskMgmt'},
@@ -833,7 +740,6 @@ const AI_GOV = {
     {id:'AR6', text:'AI systems in production are continuously monitored for performance degradation, unexpected outputs, and signs of misuse or adversarial manipulation.', dim:'riskMgmt'},
     {id:'AR7', text:'We have evaluated and mitigated specific risks from generative AI use — including hallucinations, deepfakes, prompt injection, and data leakage via LLM APIs.', dim:'riskMgmt'},
     {id:'AR8', text:'Third-party AI components, APIs, and foundation models used in our products are formally assessed for risk — including vendor reliability, model provenance, and terms of service.', dim:'riskMgmt'},
-    // Human Oversight & Control (8)
     {id:'AH1', text:'All high-risk AI systems operate with defined human oversight — no fully autonomous AI makes consequential decisions affecting individuals without human review.', dim:'humanOversight'},
     {id:'AH2', text:'We have formally defined what constitutes a consequential AI decision that requires human-in-the-loop verification, and this definition is operationally enforced.', dim:'humanOversight'},
     {id:'AH3', text:'Personnel responsible for overseeing AI systems are trained in AI literacy, system limitations, bias recognition, and appropriate escalation protocols.', dim:'humanOversight'},
@@ -842,7 +748,6 @@ const AI_GOV = {
     {id:'AH6', text:'A named owner is formally assigned to each deployed AI system — accountable for its outputs, performance, compliance, and lifecycle management.', dim:'humanOversight'},
     {id:'AH7', text:'Processes exist to suspend, roll back, or decommission AI systems that exhibit harmful, biased, or non-compliant behaviour — with defined trigger criteria.', dim:'humanOversight'},
     {id:'AH8', text:'Periodic human reviews of AI system decision samples are conducted to validate alignment with intended objectives, fairness standards, and regulatory requirements.', dim:'humanOversight'},
-    // AI Value & Outcomes (8 — outcome)
     {id:'AO1', text:'AI systems in production are delivering measurable, documented value aligned with the stated business objectives defined at deployment approval.', dim:'aiOutcomes'},
     {id:'AO2', text:'AI system performance, fairness, and compliance metrics are tracked, reviewed by leadership, and reported on a defined cadence.', dim:'aiOutcomes'},
     {id:'AO3', text:'AI-driven decisions have not resulted in material regulatory, legal, consumer protection, or reputational incidents in the past 12 months.', dim:'aiOutcomes'},
@@ -909,17 +814,17 @@ function calcResults(config, answers, profile) {
 // ─── CERTIFICATE SYSTEM ──────────────────────────────────────────────────────
 const CERT_TIERS = [
   { id:'gold',   label:'Gold',   name:'Pramanik Leading',    minScore:4.2,
-    color:'#78350f', bg:'#fffbeb', border:'#f59e0b', badge:'#d97706',
+    color:'#047857', bg:'#ecfdf5', border:'#a7f3d0', badge:'#047857',
     tagline:'Sector-leading maturity. Validated against Indian industry benchmarks.',
     perks:['Gold Certificate — display in RFPs, investor decks, website','Pramanik Leading digital badge for LinkedIn & email signature','Listed on Pramanik Annual India Leaders Registry','Priority access to Verified Assessment (consultant co-signed)','12-month validity with year-on-year Progress Report on renewal'],
   },
   { id:'silver', label:'Silver', name:'Pramanik Advanced',   minScore:3.4,
-    color:'#1e3a5f', bg:'#eff6ff', border:'#60a5fa', badge:'#2563eb',
+    color:'#059669', bg:'#d1fae5', border:'#6ee7b7', badge:'#059669',
     tagline:'Robust programme, above benchmark for your sector and company size.',
     perks:['Silver Certificate PDF','Pramanik Advanced digital badge','12-month validity with annual Progress Report','Eligible to upgrade to Gold via Verified Assessment'],
   },
   { id:'bronze', label:'Bronze', name:'Pramanik Developing',  minScore:2.5,
-    color:'#431407', bg:'#fff7ed', border:'#fb923c', badge:'#ea580c',
+    color:'#10b981', bg:'#a7f3d0', border:'#34d399', badge:'#10b981',
     tagline:'Baseline practices in place. A documented starting point for improvement.',
     perks:['Bronze Certificate PDF','12-month validity — renewal shows progress trajectory','Benchmark gap report included','Roadmap to Silver with prioritised actions'],
   },
@@ -957,25 +862,25 @@ const ASSESSMENTS = [
     desc:'Evaluate ESG maturity against SEBI BRSR and GRI standards — governance, environment, social, and supply chain. Calibrated for Indian enterprises by industry and company size.',
     dims:['Governance & Ethics','Environmental Mgmt','Social & Human Capital','ESG Strategy','Supply Chain','Reporting & Disclosure'],
     questions:50, time:'~12 min', icon:'◉', patented:false,
-    lightBg:'#f0f9ff', lightAccent:'#0c2a3a', lightMid:'#0891b2', lightBorder:'#bae6fd' },
+    lightBg:'#f0fdf4', lightAccent:'#022c22', lightMid:'#047857', lightBorder:'#bbf7d0' },
   { id:'dei', n:'03', name:'DEI Maturity Index',                  shortName:'DEI', theme:THEMES.dei,
     tagline:'How inclusive is your organisation — really?',
     desc:'Assess DEI maturity through an India-first lens — gender equity, RPWD Act compliance, social equity, and the cultural practices that make inclusion real.',
     dims:['Gender Equity','Inclusion Culture','DEI Leadership','Social Equity','Disability & Access','Measurement'],
     questions:50, time:'~12 min', icon:'◎', patented:false,
-    lightBg:'#faf5ff', lightAccent:'#1e1040', lightMid:'#7c3aed', lightBorder:'#e9d5ff' },
+    lightBg:'#f0fdf4', lightAccent:'#022c22', lightMid:'#047857', lightBorder:'#bbf7d0' },
   { id:'dpdp', n:'04', name:'Data Privacy & DPDP Readiness',     shortName:'DPDP', theme:THEMES.dpdp,
     tagline:'Are you ready for the DPDP Act before the deadline?',
     desc:"Assess readiness against India's DPDP Act 2023 and Rules 2025 — consent, data governance, security safeguards, individual rights, and vendor compliance. Deadline: May 2027.",
     dims:['Consent & Notice','Data Governance','Security & Breach','Individual Rights','Vendor Management','Compliance Gov'],
     questions:48, time:'~12 min', icon:'◫', patented:false,
-    lightBg:'#f0f9ff', lightAccent:'#0c1f35', lightMid:'#0369a1', lightBorder:'#bae6fd' },
+    lightBg:'#f0fdf4', lightAccent:'#022c22', lightMid:'#047857', lightBorder:'#bbf7d0' },
   { id:'aiGov', n:'05', name:'AI Governance Readiness',           shortName:'AI Gov', theme:THEMES.aiGov,
     tagline:'Is your AI deployment responsible and regulator-ready?',
     desc:'Evaluate AI governance against MeitY India AI Governance Guidelines, RBI FREE-AI Framework, and SEBI algorithmic accountability requirements.',
     dims:['AI Strategy','Data & Ethics','Transparency','Risk Management','Human Oversight','AI Outcomes'],
     questions:48, time:'~12 min', icon:'◬', patented:false,
-    lightBg:'#eef2ff', lightAccent:'#13102a', lightMid:'#4338ca', lightBorder:'#c7d2fe' },
+    lightBg:'#f0fdf4', lightAccent:'#022c22', lightMid:'#047857', lightBorder:'#bbf7d0' },
 ];
 
 const Home = ({ onSelect }) => {
@@ -996,16 +901,16 @@ const Home = ({ onSelect }) => {
     <div style={{ background:'#fff' }}>
 
       {/* HERO */}
-      <section style={{ background:'#f0fdf4', borderBottom:'1px solid #d1fae5', padding:'80px 64px 72px' }}>
-        <div style={{ maxWidth:1160, margin:'0 auto' }}>
-          <div className="afu" style={{ display:'flex', alignItems:'center', gap:12, marginBottom:28 }}>
-            <div style={{ width:28, height:28, borderRadius:6, background:'#047857', display:'flex', alignItems:'center', justifyContent:'center' }}>
+      <section style={{ background:'linear-gradient(-45deg, #f0fdf4, #ffffff, #ecfdf5)', backgroundSize:'400% 400%', animation:'subtleBg 15s ease infinite', borderBottom:'1px solid #d1fae5', padding:'100px 64px 80px' }}>
+        <div className="animate-up" style={{ maxWidth:1160, margin:'0 auto' }}>
+          <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:28 }}>
+            <div style={{ width:28, height:28, borderRadius:6, background:'#047857', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 4px 12px rgba(4,120,87,0.3)' }}>
               <span style={{ color:'white', fontSize:13, fontWeight:700, fontFamily:'Libre Baskerville,serif' }}>P</span>
             </div>
             <span style={{ fontSize:11, color:'#047857', letterSpacing:'0.16em', textTransform:'uppercase', fontWeight:600 }}>Pramanik · Enterprise Maturity Platform · India</span>
           </div>
           <div style={{ display:'grid', gridTemplateColumns:'3fr 2fr', gap:64, alignItems:'center' }}>
-            <div className="afu2">
+            <div>
               <h1 className="fd" style={{ fontSize:'clamp(2.8rem,5vw,4.4rem)', color:'#022c22', lineHeight:1.05, marginBottom:20 }}>
                 Know where your enterprise truly stands.
               </h1>
@@ -1014,10 +919,10 @@ const Home = ({ onSelect }) => {
               </p>
               <div style={{ display:'flex', gap:12, flexWrap:'wrap', marginBottom:32 }}>
                 {ASSESSMENTS.slice(0,3).map(a=>(
-                  <button key={a.id} onClick={()=>onSelect(a.id)} style={{ background:a.lightAccent, color:'white', border:'none', borderRadius:7, padding:'11px 20px', fontSize:13, fontWeight:600, cursor:'pointer' }}>{a.shortName} →</button>
+                  <button key={a.id} onClick={()=>onSelect(a.id)} style={{ background:a.lightAccent, color:'white', border:'none', borderRadius:7, padding:'11px 20px', fontSize:13, fontWeight:600, cursor:'pointer', transition:'all 0.2s', boxShadow:'0 4px 12px rgba(2,44,34,0.15)' }} onMouseOver={e=>e.currentTarget.style.transform='translateY(-2px)'} onMouseOut={e=>e.currentTarget.style.transform='translateY(0)'}>{a.shortName} →</button>
                 ))}
                 {ASSESSMENTS.slice(3).map(a=>(
-                  <button key={a.id} onClick={()=>onSelect(a.id)} style={{ background:'white', color:a.lightAccent, border:`1px solid ${a.lightBorder}`, borderRadius:7, padding:'11px 20px', fontSize:13, fontWeight:600, cursor:'pointer' }}>{a.shortName} →</button>
+                  <button key={a.id} onClick={()=>onSelect(a.id)} style={{ background:'white', color:a.lightAccent, border:`1px solid ${a.lightBorder}`, borderRadius:7, padding:'11px 20px', fontSize:13, fontWeight:600, cursor:'pointer', transition:'all 0.2s' }} onMouseOver={e=>{e.currentTarget.style.background='#f0fdf4'; e.currentTarget.style.transform='translateY(-2px)';}} onMouseOut={e=>{e.currentTarget.style.background='white'; e.currentTarget.style.transform='translateY(0)';}}>{a.shortName} →</button>
                 ))}
               </div>
               <div style={{ display:'flex', gap:28, flexWrap:'wrap' }}>
@@ -1028,7 +933,7 @@ const Home = ({ onSelect }) => {
                 ))}
               </div>
             </div>
-            <div className="afu3">
+            <div className="animate-up delay-1">
               {[['250+','diagnostic questions across five frameworks'],['14','Indian industry benchmarks per assessment'],['3','certificate tiers — Bronze, Silver, Gold']].map(([n,l],i)=>(
                 <div key={n} style={{ display:'flex', alignItems:'baseline', gap:14, padding:'18px 0', borderBottom:i<2?'1px solid #d1fae5':'' }}>
                   <span className="fd" style={{ fontSize:'2.8rem', color:'#022c22', flexShrink:0, lineHeight:1 }}>{n}</span>
@@ -1041,43 +946,44 @@ const Home = ({ onSelect }) => {
       </section>
 
       {/* ASSESSMENT CARDS */}
-      <section style={{ padding:'72px 64px', maxWidth:1160, margin:'0 auto' }}>
-        <div style={{ marginBottom:40 }}>
+      <section className="animate-up delay-2" style={{ padding:'80px 64px', maxWidth:1160, margin:'0 auto', background: 'url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'2\' cy=\'2\' r=\'1\' fill=\'%23047857\' fill-opacity=\'0.05\'/%3E%3C/svg%3E")' }}>
+        <div style={{ marginBottom:48, textAlign: 'center' }}>
           <p style={{ fontSize:11, color:'#047857', letterSpacing:'0.14em', textTransform:'uppercase', fontWeight:600, marginBottom:10 }}>The five assessments</p>
           <h2 className="fd" style={{ fontSize:'clamp(1.8rem,3vw,2.6rem)', color:'#022c22' }}>Choose your diagnostic</h2>
         </div>
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))', gap:20 }}>
-          {ASSESSMENTS.map(a=>{
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))', gap:24 }}>
+          {ASSESSMENTS.map((a, idx)=>{
             const h=hovered===a.id;
             return (
               <div key={a.id} onMouseEnter={()=>setHovered(a.id)} onMouseLeave={()=>setHovered(null)}
-                style={{ background:h?a.lightBg:'#fff', border:`1px solid ${h?a.lightBorder:'#e5e7eb'}`, borderRadius:14, padding:'28px 24px 24px', display:'flex', flexDirection:'column', transition:'all 0.2s', boxShadow:h?`0 4px 24px ${a.lightMid}18`:'0 1px 4px rgba(0,0,0,0.04)' }}>
+                className="glass-card animate-zoom"
+                style={{ borderRadius:16, padding:'32px 24px', display:'flex', flexDirection:'column', animationDelay: `${idx * 0.1}s` }}>
                 <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
                   <span style={{ fontSize:11, fontWeight:700, color:a.lightMid, letterSpacing:'0.12em' }}>{a.n}</span>
                   <div style={{ display:'flex', alignItems:'center', gap:6 }}>
-                    {a.patented && <span style={{ fontSize:9, fontWeight:600, textTransform:'uppercase', letterSpacing:'0.1em', color:'#b45309', background:'#fffbeb', border:'1px solid #fcd34d', padding:'2px 7px', borderRadius:20 }}>Patented</span>}
-                    <span style={{ fontSize:20, color:a.lightMid, opacity:0.7 }}>{a.icon}</span>
+                    {a.patented && <span style={{ fontSize:9, fontWeight:600, textTransform:'uppercase', letterSpacing:'0.1em', color:'#065f46', background:'#d1fae5', border:'1px solid #6ee7b7', padding:'2px 7px', borderRadius:20 }}>Patented</span>}
+                    <span style={{ fontSize:20, color:a.lightMid, opacity:0.8, transform: h ? 'scale(1.1)' : 'scale(1)', transition: 'transform 0.3s' }}>{a.icon}</span>
                   </div>
                 </div>
                 <h3 className="fd" style={{ fontSize:'1.35rem', color:'#0d1117', marginBottom:7, lineHeight:1.2 }}>{a.name}</h3>
-                <p style={{ fontSize:12, color:a.lightMid, marginBottom:14, fontStyle:'italic' }}>{a.tagline}</p>
-                <p style={{ fontSize:13, color:'#6b7280', lineHeight:1.65, marginBottom:20, flex:1 }}>{a.desc}</p>
-                <div style={{ display:'flex', flexDirection:'column', gap:4, marginBottom:20 }}>
+                <p style={{ fontSize:12, color:a.lightMid, marginBottom:16, fontStyle:'italic' }}>{a.tagline}</p>
+                <p style={{ fontSize:13, color:'#6b7280', lineHeight:1.65, marginBottom:24, flex:1 }}>{a.desc}</p>
+                <div style={{ display:'flex', flexDirection:'column', gap:6, marginBottom:24 }}>
                   {a.dims.map(d=>(
                     <div key={d} style={{ display:'flex', alignItems:'center', gap:8 }}>
                       <span style={{ width:4, height:4, borderRadius:'50%', background:a.lightMid, display:'block', flexShrink:0, opacity:0.7 }} />
-                      <span style={{ fontSize:11, color:'#9ca3af' }}>{d}</span>
+                      <span style={{ fontSize:11, color:'#6b7280' }}>{d}</span>
                     </div>
                   ))}
                 </div>
-                <div style={{ paddingTop:14, borderTop:`1px solid ${a.lightBorder}`, marginBottom:16, display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <span style={{ fontSize:11, color:'#9ca3af' }}>{a.questions} questions · {a.time} · Pramanik Certificate eligible</span>
+                <div style={{ paddingTop:16, borderTop:`1px solid ${a.lightBorder}`, marginBottom:20, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <span style={{ fontSize:11, color:'#9ca3af' }}>{a.questions} questions · {a.time} · Certificate eligible</span>
                   {stats[a.id] && (
                     <span style={{ fontSize:11, fontWeight: 600, color: a.lightMid }}>Global Average: {stats[a.id].average_score}/5.0 ({stats[a.id].total_completions} taken)</span>
                   )}
                 </div>
-                <button onClick={()=>onSelect(a.id)} style={{ background:h?a.lightAccent:'transparent', color:h?'white':a.lightMid, border:`1px solid ${h?a.lightAccent:a.lightBorder}`, borderRadius:8, padding:'11px 18px', fontSize:13, fontWeight:600, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'space-between', transition:'all 0.2s' }}>
-                  <span>Begin Assessment</span><span>→</span>
+                <button onClick={()=>onSelect(a.id)} style={{ background:h?a.lightAccent:'transparent', color:h?'white':a.lightMid, border:`1px solid ${h?a.lightAccent:a.lightBorder}`, borderRadius:8, padding:'11px 18px', fontSize:13, fontWeight:600, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'space-between', transition:'all 0.3s' }}>
+                  <span>Begin Assessment</span><span style={{ transform: h ? 'translateX(4px)' : 'translateX(0)', transition:'transform 0.3s' }}>→</span>
                 </button>
               </div>
             );
@@ -1089,26 +995,26 @@ const Home = ({ onSelect }) => {
       <div style={{ borderTop:'1px solid #e5e7eb', borderBottom:'1px solid #e5e7eb', padding:'14px 0', overflow:'hidden', background:'#f0fdf4' }}>
         <div style={{ display:'flex', animation:'marquee 32s linear infinite', width:'max-content' }}>
           {[...IND_SCROLL,...IND_SCROLL].map((ind,i)=>(
-            <span key={i} style={{ fontSize:11, color:'#9ca3af', letterSpacing:'0.06em', padding:'0 28px', whiteSpace:'nowrap', borderRight:'1px solid #e5e7eb' }}>{ind}</span>
+            <span key={i} style={{ fontSize:11, color:'#10b981', letterSpacing:'0.06em', padding:'0 28px', whiteSpace:'nowrap', borderRight:'1px solid #d1fae5', textTransform:'uppercase', fontWeight:500 }}>{ind}</span>
           ))}
         </div>
       </div>
 
       {/* HOW IT WORKS */}
-      <section style={{ padding:'80px 64px', maxWidth:1160, margin:'0 auto', display:'grid', gridTemplateColumns:'1fr 1fr', gap:80, alignItems:'center' }}>
+      <section className="animate-up delay-3" style={{ padding:'100px 64px', maxWidth:1160, margin:'0 auto', display:'grid', gridTemplateColumns:'1fr 1fr', gap:80, alignItems:'center' }}>
         <div>
           <p style={{ fontSize:11, color:'#047857', letterSpacing:'0.14em', textTransform:'uppercase', fontWeight:600, marginBottom:16 }}>How it works</p>
           <h2 className="fd" style={{ fontSize:'clamp(1.8rem,3vw,2.6rem)', color:'#022c22', marginBottom:20, lineHeight:1.1 }}>
-            From first question<br /><span className="fdi" style={{ color:'#9ca3af' }}>to Pramanik Certificate,</span><br />in under 15 minutes.
+            From first question<br /><span className="fdi" style={{ color:'#10b981' }}>to Pramanik Certificate,</span><br />in under 15 minutes.
           </h2>
           <p style={{ fontSize:15, color:'#6b7280', lineHeight:1.8 }}>No sign-up, no waiting. Complete an assessment and receive your full benchmarked report and certificate instantly.</p>
         </div>
         <div>
           {[['Select your assessment','Choose from five frameworks. Each is fully independent and self-contained.'],['Profile your organisation','Select industry and annual turnover to calibrate your benchmark against Indian peers.'],['Answer the diagnostic','Rate each statement 1–5. Takes under 15 minutes.'],['Receive your report and certificate','Instant score, benchmark comparison, action plan, and Pramanik Certificate if eligible.']].map(([t,d],i)=>(
-            <div key={t} style={{ display:'flex', gap:18, padding:'18px 0', borderBottom:i<3?'1px solid #e5e7eb':'' }}>
-              <span style={{ width:28, height:28, borderRadius:'50%', background:'#022c22', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700, color:'#a7f3d0', fontFamily:'Inter,sans-serif' }}>0{i+1}</span>
+            <div key={t} style={{ display:'flex', gap:18, padding:'20px 0', borderBottom:i<3?'1px solid #e5e7eb':'' }}>
+              <span style={{ width:32, height:32, borderRadius:'50%', background:'#022c22', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:13, fontWeight:700, color:'#a7f3d0', fontFamily:'Inter,sans-serif' }}>0{i+1}</span>
               <div>
-                <p style={{ fontSize:14, fontWeight:600, color:'#0d1117', marginBottom:3 }}>{t}</p>
+                <p style={{ fontSize:14, fontWeight:600, color:'#0d1117', marginBottom:4 }}>{t}</p>
                 <p style={{ fontSize:13, color:'#6b7280', lineHeight:1.6 }}>{d}</p>
               </div>
             </div>
@@ -1117,25 +1023,25 @@ const Home = ({ onSelect }) => {
       </section>
 
       {/* CERTIFICATE SECTION */}
-      <section style={{ background:'#f8f7f5', borderTop:'1px solid #e5e7eb', padding:'72px 64px' }}>
+      <section className="animate-up delay-4" style={{ background:'linear-gradient(to bottom, #ffffff, #f0fdf4)', borderTop:'1px solid #d1fae5', padding:'100px 64px' }}>
         <div style={{ maxWidth:1160, margin:'0 auto' }}>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:64, alignItems:'center' }}>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:80, alignItems:'center' }}>
             <div>
               <p style={{ fontSize:11, color:'#047857', letterSpacing:'0.14em', textTransform:'uppercase', fontWeight:600, marginBottom:16 }}>Pramanik Certificate</p>
               <h2 className="fd" style={{ fontSize:'clamp(1.8rem,3vw,2.6rem)', color:'#022c22', marginBottom:20, lineHeight:1.1 }}>A credential worth displaying.</h2>
-              <p style={{ fontSize:15, color:'#6b7280', lineHeight:1.8, marginBottom:28 }}>Every assessment produces a scored, benchmarked certificate — Bronze, Silver, or Gold — valid for 12 months. Use it in RFPs, investor decks, and recruitment to demonstrate verified maturity.</p>
-              <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+              <p style={{ fontSize:15, color:'#6b7280', lineHeight:1.8, marginBottom:32 }}>Every assessment produces a scored, benchmarked certificate valid for 12 months. Use it in RFPs, investor decks, and recruitment to demonstrate verified maturity.</p>
+              <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
                 {[['Bronze — EMS Developing','2.5+ score','Baseline practices documented'],['Silver — Pramanik Advanced','3.4+ score','Above benchmark for sector & size'],['Gold — Pramanik Leading','4.2+ score','Sector-leading, India Leaders Registry']].map(([name,score,desc],i)=>{
-                  const colors=[['#ea580c','#fff7ed','#fed7aa'],['#2563eb','#eff6ff','#bfdbfe'],['#d97706','#fffbeb','#fde68a']];
+                  const colors=[['#10b981','#ecfdf5','#a7f3d0'],['#059669','#d1fae5','#6ee7b7'],['#047857','#a7f3d0','#34d399']];
                   const [c,bg,bd]=colors[i];
                   return (
-                    <div key={name} style={{ background:bg, border:`1px solid ${bd}`, borderRadius:10, padding:'14px 18px', display:'flex', alignItems:'center', gap:14 }}>
-                      <div style={{ width:32, height:32, borderRadius:'50%', background:c, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                        <span style={{ color:'white', fontSize:12, fontWeight:700 }}>{['B','S','G'][i]}</span>
+                    <div key={name} style={{ background:bg, border:`1px solid ${bd}`, borderRadius:12, padding:'16px 20px', display:'flex', alignItems:'center', gap:16, transition:'transform 0.2s', cursor:'default' }} onMouseOver={e=>e.currentTarget.style.transform='translateX(8px)'} onMouseOut={e=>e.currentTarget.style.transform='translateX(0)'}>
+                      <div style={{ width:36, height:36, borderRadius:'50%', background:c, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, boxShadow:`0 4px 12px ${bd}` }}>
+                        <span style={{ color:'white', fontSize:13, fontWeight:700 }}>{['B','S','G'][i]}</span>
                       </div>
                       <div>
-                        <p style={{ fontSize:13, fontWeight:600, color:'#0d1117' }}>{name}</p>
-                        <p style={{ fontSize:12, color:'#6b7280' }}>{score} · {desc}</p>
+                        <p style={{ fontSize:14, fontWeight:600, color:'#022c22' }}>{name}</p>
+                        <p style={{ fontSize:13, color:'#065f46' }}>{score} · {desc}</p>
                       </div>
                     </div>
                   );
