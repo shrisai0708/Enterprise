@@ -165,9 +165,9 @@ const SIZES = [
   { value:5, name:'Very Large', range:'More than ₹1,000 Crore' },
 ];
 const SCALE = ['Strongly Disagree','Disagree','Neutral','Agree','Strongly Agree'];
-const LEVEL_COLORS = ['#9ca3af','#ea580c','#d97706','#059669','#022c22'];
-const LEVEL_BG     = ['#f3f4f6','#fff7ed','#fffbeb','#d1fae5','#022c22'];
-const LEVEL_TEXT   = ['#374151','#9a3412','#92400e','#065f46','#a7f3d0'];
+const LEVEL_COLORS = ['#9ca3af', '#6ee7b7', '#34d399', '#10b981', '#047857'];
+const LEVEL_BG     = ['#f3f4f6', '#ecfdf5', '#d1fae5', '#a7f3d0', '#022c22'];
+const LEVEL_TEXT   = ['#374151', '#065f46', '#065f46', '#022c22', '#a7f3d0'];
 
 function getLevel(score, descs) {
   const ranges = [[1,1.8],[1.8,2.6],[2.6,3.4],[3.4,4.2],[4.2,5.1]];
@@ -202,7 +202,7 @@ const ANALYTICS = {
   outcomeDimKey: 'outcomes',
   outcomeDimLabel: 'Value & Benefits Realization',
   outcomeDesc: 'The outcomes your analytics programme is currently delivering.',
-  dimColors: { leadership:'#022c22', it:'#1d4ed8', people:'#7c3aed', org:'#c2410c', catalysts:'#be185d', outcomes:'#b45309' },
+  dimColors: {},
   levelDescs: [
     'Analytics is absent or ad hoc. No consistent data-driven culture or infrastructure.',
     'Awareness is growing but inconsistent. Pockets of good practice with no enterprise approach.',
@@ -315,7 +315,7 @@ const ESG = {
   outcomeDimKey: 'reporting',
   outcomeDimLabel: 'Reporting & Disclosure Quality',
   outcomeDesc: 'The quality and completeness of your current ESG disclosures (BRSR / GRI).',
-  dimColors: { governance:'#022c22', environmental:'#047857', social:'#1d4ed8', strategy:'#7c3aed', supplychain:'#c2410c', reporting:'#b45309' },
+  dimColors: {},
   levelDescs: [
     'ESG is absent or reactive. No formal policies, minimal compliance, no structured reporting.',
     'Basic compliance is in place. ESG awareness is growing but disconnected from strategy.',
@@ -428,7 +428,7 @@ const DEI = {
   outcomeDimKey: 'measurement',
   outcomeDimLabel: 'Measurement & Accountability',
   outcomeDesc: 'The rigour of your DEI data collection, tracking, and external reporting.',
-  dimColors: { gender:'#7c3aed', culture:'#be185d', deistrategy:'#022c22', social:'#c2410c', disability:'#1d4ed8', measurement:'#b45309' },
+  dimColors: {},
   levelDescs: [
     'DEI is absent or compliance-only. No formal strategy, minimal representation data, limited accountability.',
     'DEI awareness exists. Basic policies are in place but implementation is inconsistent across the organisation.',
@@ -539,7 +539,7 @@ const DPDP = {
   outcomeDimKey:'complianceGov',
   outcomeDimLabel:'Compliance Governance & Accountability',
   outcomeDesc:'The maturity of your DPO function, DPIA processes, and overall privacy governance programme.',
-  dimColors:{ consent:'#0369a1', dataGov:'#0891b2', security:'#022c22', rights:'#7c3aed', vendor:'#c2410c', complianceGov:'#b45309' },
+  dimColors: {},
   levelDescs:[
     'No formal data privacy programme. Processing is undocumented and ungoverned. Significant regulatory exposure.',
     'Basic awareness exists. Some policies drafted but implementation is fragmented and untested.',
@@ -672,7 +672,7 @@ const AI_GOV = {
   outcomeDimKey:'aiOutcomes',
   outcomeDimLabel:'AI Value & Responsible Outcomes',
   outcomeDesc:'Measurable evidence that your AI systems are delivering value responsibly, fairly, and without material incidents.',
-  dimColors:{ aiStrategy:'#4338ca', dataEthics:'#0369a1', transparency:'#022c22', riskMgmt:'#c2410c', humanOversight:'#7c3aed', aiOutcomes:'#b45309' },
+  dimColors: {},
   levelDescs:[
     'AI is deployed informally with no governance. No policies, no accountability, no oversight. Significant legal and reputational exposure.',
     'AI governance awareness is growing. Basic policies exist but are not consistently applied or enforced.',
